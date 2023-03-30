@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -163,5 +163,24 @@ public class MemberControllerTests {
                 .andExpect(content().string(containsString("""
                         <input type="submit" value="로그인"
                         """.stripIndent().trim())));
+    }
+
+    @Test
+    // @Rollback(value = false) // DB에 흔적이 남는다.
+    @DisplayName("로그인 처리")
+    void t005() throws Exception {
+        // WHEN
+        ResultActions resultActions = mvc
+                .perform(post("/member/login")
+                        .with(csrf()) // CSRF 키 생성
+                        .param("username", "user1")
+                        .param("password", "1234")
+                )
+                .andDo(print());
+
+        // THEN
+        resultActions
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/**"));
     }
 }
