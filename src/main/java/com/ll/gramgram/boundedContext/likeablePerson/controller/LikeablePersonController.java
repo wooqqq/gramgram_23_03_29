@@ -34,7 +34,7 @@ public class LikeablePersonController {
 
     @PostMapping("/add")
     private String add(@Valid AddForm addForm) {
-        RsData<LikeablePerson> createRsData = likeablePersonService.create(rq.getMember(), addForm.getUsername(), addForm.getAttractiveTypeCode());
+        RsData<LikeablePerson> createRsData = likeablePersonService.like(rq.getMember(), addForm.getUsername(), addForm.getAttractiveTypeCode());
 
         if (createRsData.isFail()) {
             return rq.historyBack(createRsData);
