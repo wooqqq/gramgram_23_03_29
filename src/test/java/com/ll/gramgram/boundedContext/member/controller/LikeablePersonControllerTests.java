@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -78,7 +77,6 @@ public class LikeablePersonControllerTests {
                 .andExpect(content().string(containsString("""
                         <input type="submit" value="추가"
                         """.stripIndent().trim())));
-        ;
     }
 
     @Test
@@ -99,7 +97,6 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().handlerType(LikeablePersonController.class))
                 .andExpect(handler().methodName("add"))
                 .andExpect(status().is3xxRedirection());
-        ;
     }
 
     @Test
@@ -120,6 +117,33 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().handlerType(LikeablePersonController.class))
                 .andExpect(handler().methodName("add"))
                 .andExpect(status().is3xxRedirection());
-        ;
+    }
+
+    @Test
+    @DisplayName("호감목록")
+    @WithUserDetails("user3")
+    void t005() throws Exception {
+        // WHEN
+        ResultActions resultActions = mvc
+                .perform(get("/likeablePerson/list"))
+                .andDo(print());
+
+        // THEN
+        resultActions
+                .andExpect(handler().handlerType(LikeablePersonController.class))
+                .andExpect(handler().methodName("showList"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().string(containsString("""
+                        <span class="toInstaMember_username">insta_user4</span>
+                        """.stripIndent().trim())))
+                .andExpect(content().string(containsString("""
+                        <span class="toInstaMember_attractiveTypeDisplayName">외모</span>
+                        """.stripIndent().trim())))
+                .andExpect(content().string(containsString("""
+                        <span class="toInstaMember_username">insta_user100</span>
+                        """.stripIndent().trim())))
+                .andExpect(content().string(containsString("""
+                        <span class="toInstaMember_attractiveTypeDisplayName">성격</span>
+                        """.stripIndent().trim())));
     }
 }
