@@ -44,6 +44,16 @@ public class InstaMemberService {
 
         instaMemberRepository.save(instaMember);
 
-        return RsData.of("S-1", "인스타계저잉 등록되었습니다.", instaMember);
+        return RsData.of("S-1", "인스타계정이 등록되었습니다.", instaMember);
+    }
+
+    @Transactional
+    public InstaMember findByUsernameOrCreate(String username) {
+        Optional<InstaMember> opInstaMember = findByUsername(username);
+
+        if (opInstaMember.isPresent()) return opInstaMember.get();
+
+        // 아직 성별을 알 수 없으니, 언노운의 의미로 U 넣음
+        return create(username, "U").getData();
     }
 }
